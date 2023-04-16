@@ -1,0 +1,24 @@
+name: go lint run
+
+on:
+ push:
+   branches:
+     - main
+     
+     
+jobs:
+  lint:
+     runs-on: ubuntu-14.04
+     steps:
+       - uses: actions/checkout@v2
+       - uses: actions/setup-go@v2
+         with:
+           stable: 'false'
+           version: '1.14.1'
+       - name: lint
+         run: |
+           curl --sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -S -- -b $(go env GOPATh)/bin v1.26.0
+           golangcli-lint run
+           
+           
+      
