@@ -1,9 +1,11 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"io"
 	"net/http"
+	"errors"
 )
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
