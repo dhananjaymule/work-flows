@@ -7,9 +7,10 @@ on:
      
      
 jobs:
-  Hello: ubuntu-18.04
-  steps: 
-    - name: hello-world
-      run: echo "hello world"
+  Hello: 
+    runs-on: ubuntu-18.04
+    steps: 
+      - name: hello-world
+        run: echo "hello world"
       
   
