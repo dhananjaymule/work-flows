@@ -1,4 +1,4 @@
-name: publish-image-docker
+name: approval-process-test
 
 on:
  push:
@@ -30,7 +30,7 @@ jobs:
        - name: build-image
          run: docker build .  --tag work-flow-test:v1
          
-    push:
+  push:
       runs-on: ubuntu-latest
       needs: build
       steps:
