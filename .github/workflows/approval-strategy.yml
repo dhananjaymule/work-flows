@@ -38,7 +38,7 @@ jobs:
        - name: wait for approval
          uses: trstringer/manual-approval@v1
          with:
-           secret: ${{ github.TOKEN }}
+           secret: ${{ secrets.TOKEN }}
            approvers: dhananjaymule
          
          
