@@ -11,7 +11,7 @@ jobs:
      steps:
        - uses: actions/checkout@v2
        - name: build-image
-         run: docker build . --tag work-flow-test:$(date +%s)
+         run: docker build .  --tag work-flow-test:$(date +%s)
          
        - name: pubkish-image
          uses: elgohr/Publish-Docker-Github-Action@master
