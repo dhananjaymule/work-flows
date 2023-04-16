@@ -11,7 +11,15 @@ jobs:
      steps:
        - uses: actions/checkout@v2
        - name: build-image
-         run: docker build .  --tag work-flow-test:$(date +%s)
+         run: docker build .  --tag work-flow-test:v1
+         
+       - name: run-docker
+         run: docker run -it work-flow-test:v1 -p 3333:3333 --name diksha-trial 
+         
+       - name: check http status 
+         run:  curl http://localhost:3333 -I 
+         
+         
          
        - name: pubkish-image
          uses: elgohr/Publish-Docker-Github-Action@master
