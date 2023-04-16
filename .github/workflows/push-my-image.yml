@@ -14,7 +14,7 @@ jobs:
          run: docker buld . --tag work-flow-test:$(date +%s)
          
        - name: pubkish-image
-         uses: elghor/Publish-Docker-Github-Action@master
+         uses: elgohr/Publish-Docker-Github-Action@master
          with: 
            name: djmule001/workflow-actions
            username: ${{ secrets.REPO_USERNAME }}
