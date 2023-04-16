@@ -26,9 +26,6 @@ jobs:
        - name: check curl status 
          run: curl -I http://localhost:3333
          
-
-       - name: build-image
-         run: docker build .  --tag work-flow-test:v1
          
   push:
       runs-on: ubuntu-latest
@@ -41,7 +38,10 @@ jobs:
            secret: ${{ secrets.TOKEN }}
            approvers: dhananjaymule
          
-         
+       - uses: actions/checkout@v2    
+       
+       - name: build-image
+         run: docker build .  --tag work-flow-test:v1      
          
        - name: pubkish-image
          uses: elgohr/Publish-Docker-Github-Action@master
