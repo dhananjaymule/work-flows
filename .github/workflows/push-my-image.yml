@@ -21,7 +21,7 @@ jobs:
          run:  go build ./http-server.go 
          
        - name: run http server
-         run:  ./http-server
+         run:  ./http-server &
          
        - name: check curl status 
          run: curl -I http://localhost:3333
