@@ -3,11 +3,11 @@ name: hello
 on:
   push:
     branches:
-      - master
+      - main
       
 jobs: 
   Hello:
     runs-on: ubuntu-18.04
     steps:
-      - name: hello
+      - name: Hello
         run: echo "hello world"
