@@ -23,3 +23,4 @@ func main() {
 	http.HandleFunc("/hello", getHello)
 
 	err := http.ListenAndServe(":3333", nil)
+}
