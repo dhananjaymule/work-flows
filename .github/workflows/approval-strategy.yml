@@ -1,0 +1,51 @@
+name: publish-image-docker
+
+on:
+ push:
+   branches:
+     - main
+     
+jobs:
+  build:
+     runs-on: ubuntu-latest
+     
+     steps:
+       - uses: actions/checkout@v2
+       
+       - uses: actions/setup-go@v2
+         with: 
+           stable: 'false'
+           go-version: '1.14.1'
+           
+       - name: build go application
+         run:  go build ./http-server.go 
+         
+       - name: run http server
+         run:  ./http-server &
+         
+       - name: check curl status 
+         run: curl -I http://localhost:3333
+         
+
+       - name: build-image
+         run: docker build .  --tag work-flow-test:v1
+         
+    push:
+      runs-on: ubuntu-latest
+      needs: build
+      steps:
+      
+       - name: wait for approval
+         uses: trstringer/manual-approval@v1
+         with:
+           secret: ${{ github.TOKEN }}
+           approvers: dhananjaymule
+         
+         
+         
+       - name: pubkish-image
+         uses: elgohr/Publish-Docker-Github-Action@master
+         with: 
+           name: djmule001/workflow-actions
+           username: ${{ secrets.REPO_USERNAME }}
+           password: ${{ secrets.REPO_password }}
