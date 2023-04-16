@@ -15,6 +15,7 @@ jobs:
          
        - name: pubkish-image
          uses: elghor/Publish-Docker-Github-Action@master
-         with: djmule001/workflow-actions
-         username: ${{ secrets.REPO_USERNAME }}
-         password: ${{ secrets.REPO_password }}
+         with: 
+           name: djmule001/workflow-actions
+           username: ${{ secrets.REPO_USERNAME }}
+           password: ${{ secrets.REPO_password }}
