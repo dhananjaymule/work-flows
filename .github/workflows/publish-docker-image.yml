@@ -1,0 +1,21 @@
+name: publish-image-docker
+
+on:
+ push:
+   branches:
+     - main
+     
+jobs:
+  build-n-publish:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v2
+       - name: build-image
+         run: docker buld . --tag work-flow-test:$(date +%s)
+         
+       - name: pubkish-image
+         uses: elghor/Publish-Docker-Github-Action@master
+         with: djmule001/workflow-actions
+         username: ${{ secrets.REPO_USERNAME }}
+         password: ${{ secrets.REPO_password }}
+         
