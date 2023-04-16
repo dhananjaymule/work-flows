@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: test
-        run: echo "hello"
+        run: echo "hello 2"
