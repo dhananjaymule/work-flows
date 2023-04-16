@@ -9,5 +9,5 @@ jobs:
   Hello:
     runs-on: ubuntu-18.04
     steps:
-      - name: test
+      - name: hello
         run: echo "hi"
