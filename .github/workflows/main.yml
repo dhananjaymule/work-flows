@@ -1,0 +1,30 @@
+name: matrix test
+
+on: 
+  push:
+    branches:
+      - main
+      
+      
+jobs:
+  Test:
+    strategy:
+      matrix:
+        go-versions: [1.12.x, 1.13.x, 1.14.x]
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: install go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-versions }}
+      - name: checkout program
+        uses: actions/checkout@v2
+        
+      - name: test
+        runs: go test ./...
+        
+        
+    
+          
