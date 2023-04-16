@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: hello
-        run: echo "hi"
+        run: echo "hello world"
