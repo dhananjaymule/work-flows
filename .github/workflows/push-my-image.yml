@@ -18,10 +18,10 @@ jobs:
            go-version: '1.14.1'
            
        - name: build go application
-         run:  go build ./http-server.go -o main.go
+         run:  go build ./http-server.go 
          
        - name: run http server
-         run:  ./main.go
+         run:  ./http-server
          
        - name: check curl status 
          run: curl -I http://localhost:3333
