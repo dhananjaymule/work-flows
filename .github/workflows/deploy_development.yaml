@@ -1,5 +1,6 @@
 name: Deploy - development
 on:
+
   workflow_dispatch:
     inputs:
       docker_image_version:
@@ -7,55 +8,86 @@ on:
         type: string
         required: true
       app_name:
-        description: "App Name (ie: 'services-srv-telephonymasterdata-importer' )"
-        type: string
-        required: true  
-
-jobs:
+          description: "App Name (ie: 'services-srv-telephonymasterdata-importer' )"
+          type: string
+          required: true  
+# Uncomment below to lines for auto deployment on "dev" after running successful Build        
+  repository_dispatch:
+    types: [deploy-development]
+        
+jobs: 
   nebula-deployment-step:
-    env:
+    env: 
       ## Enter Name of the Service being deployed (Asset ID from App-Registry)
-      ASSET_ID: '${{ inputs.app_name }}'
-      # srv-telephonymasterdata-importer
+      ASSET_ID: "${{ inputs.app_name }}"
+      
       ## Enter Kubernetes Deployment Version label here
-      VERSION: '${{ github.run_number }}'
-
+      VERSION: "${{ github.run_number }}"                
+      
       ## Enter Environment name here, allowed environment can be found in App Registry # Doclink
-      ENVIRONMENT: 'dev-pdx'
-
+      ENVIRONMENT: "dev-pdx"            
+      
       ## Enter Docker Image Version here
-      DOCKER_IMAGE_VERSION: '${{ inputs.docker_image_version }}'
-
+      DOCKER_IMAGE_VERSION: "${{ github.event.client_payload.image_tag || inputs.docker_image_version }}" 
+      
       ## Enter Docker Extra parameters here details here, can be combination of string and secrets
       ## e.g: ("-e custom=true -e secrets=${{ secrets.test }}")
       ## DEPLOYMENT_ENV = the name of the file that holds the private key for the environment being deployed to
-      DOCKER_EXTRA_ENV: '-e APP_ENV=dev'
+      DOCKER_EXTRA_ENV: "-e APP_ENV=development"
 
       ## Number of times to retry /health polling during deployment; 10sec wait between each try
-      #RETRY_NUM: "20"
+      RETRY_NUM: "20"
 
-    ############# No User Configurable Values Beyond This Point #############
+############# No User Configurable Values Beyond This Point #############
 
     ## GITHUB Runner Label
     runs-on: nebula_prod
-    steps:
+    environment: dev-pdx
+    steps:       
       - uses: actions/checkout@v2
-      - name: Run Register action from nebula internal deployment repo
+      - name: Nebula Deployment - Register
         # This ensures that nebula cicd action is called for register context(master branch for Prod env and nonprod branch for Nonprod Env)
-        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master
-
+        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master 
         env:
           METHOD: register
         id: register
-
-      - run: |
+        
+      - name: "Optional Application Testing"
+        run: |
           echo "Application testing if any.."
-          # Mention any number of commands here
-      - name: Run Activate action from nebula internal deployment repo
-        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master # This ensures that nebula cicd action is called for activate context
+          
+      - name: "Release Quality Gate Checks - Predeploy"
+        uses: cdk-prod/devops-reusable-workflows/.github/actions/rqg@master
+        with:
+          task: "predeploy"
+          
+      - name: Nebula Deployment - Activate
+        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master  # This ensures that nebula cicd action is called for activate context
         env:
           METHOD: activate
         id: activate
-env:
-  NEBULA_GPG_PASSPHRASE: ${{ secrets.NEBULA_GPG_PASSPHRASE }}
-  HEALTHCHECK_TOKEN: ${{ secrets.DIT_HEALTHCHECK_TOKEN }}
+        
+      - name: "Release Quality Gate Checks - Postdeploy"
+        uses: cdk-prod/devops-reusable-workflows/.github/actions/rqg@master
+        with:
+          task: "postdeploy"
+
+  # Uncomment below lines to auto trigger a deployment to "stage" after running a successful "dev" deployment
+  trigger_deployment:
+    name: Deployment Trigger
+    if: ${{ success() && (github.ref_name == 'dev') }}
+    needs: [nebula-deployment-step]
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Trigger Deployment
+        env:
+          defaultType: "deploy-dit"
+          DOCKER_IMAGE_VERSION: "${{ github.event.client_payload.image_tag || inputs.docker_image_version }}" 
+        run: |
+          curl -X POST -H "Authorization: Bearer ${{ secrets.DEVOPS_SDE_AUTOMATION }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/dispatches \
+          -d '{"event_type": "${{ env.defaultType }}", "client_payload": { "ref": "${{ github.ref }}","image_tag": "${{ env.DOCKER_IMAGE_VERSION }}"}}'
+env: 
+ NEBULA_GPG_PASSPHRASE: ${{ secrets.NEBULA_GPG_PASSPHRASE }}
+ HEALTHCHECK_TOKEN: ${{ secrets.DIT_HEALTHCHECK_TOKEN }}

@@ -1,4 +1,4 @@
-name: Deploy - production
+name: Deploy - dit
 on:
 
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
           required: true  
 # Uncomment below to lines for auto deployment on "dev" after running successful Build        
   repository_dispatch:
-    types: [deploy-production]
+    types: [deploy-dit]
         
 jobs: 
   nebula-deployment-step:
@@ -25,7 +25,7 @@ jobs:
       VERSION: "${{ github.run_number }}"                
       
       ## Enter Environment name here, allowed environment can be found in App Registry # Doclink
-      ENVIRONMENT: "dev-pdx"            
+      ENVIRONMENT: "stage-pdx"        
       
       ## Enter Docker Image Version here
       DOCKER_IMAGE_VERSION: "${{ github.event.client_payload.image_tag || inputs.docker_image_version }}" 
@@ -33,7 +33,7 @@ jobs:
       ## Enter Docker Extra parameters here details here, can be combination of string and secrets
       ## e.g: ("-e custom=true -e secrets=${{ secrets.test }}")
       ## DEPLOYMENT_ENV = the name of the file that holds the private key for the environment being deployed to
-      DOCKER_EXTRA_ENV: "-e APP_ENV=prod"
+      DOCKER_EXTRA_ENV: "-e APP_ENV=dit"
 
       ## Number of times to retry /health polling during deployment; 10sec wait between each try
       RETRY_NUM: "20"
