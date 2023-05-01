@@ -1,0 +1,95 @@
+name: Build Development
+on:
+  push:
+    branches: [development]
+env:
+  BEFORE_SHA: ${{ github.event.before }}
+jobs:
+  blackduck_scan:
+    uses: cdk-prod/devops-reusable-workflows/.github/workflows/blackduck-scan.yml@master
+    secrets: inherit
+    with:
+      blackduck_project_name: '' #PortfolioName_ProductName_asset-name
+  coverity_scan:
+    # Uncomment the appropriate workflow for Coverity:
+    uses: cdk-prod/devops-reusable-workflows/.github/workflows/Coverity_Linux.yml@master # For coverity on Linux machines
+    #uses: cdk-prod/devops-reusable-workflows/.github/workflows/Coverity_Windows.yml@master # For coverity on Windows machines
+    secrets: inherit
+    with:
+      stream_name: '' # Stream name as configured in CDK Coverity server
+      #working_directory: . # Directory where .sln file exists for dotnet applications
+  build_flow:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          main-branch-name: 'development'
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - run: git fetch origin development
+      - name: Add Node to PATH
+        run: |
+          echo "/opt/node-v14.17.0-linux-x64/bin/" >> $GITHUB_PATH
+      # - run: git fetch origin master
+      - run: npm install
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+        with:
+          main-branch-name: 'development'
+      - run: |
+          echo "BASE-: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Run Affected Test
+        shell: bash
+        run: npx nx affected:test --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --with-deps=true
+      - name: Run Affected build
+        shell: bash
+        run: npx nx affected:build --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }} --with-deps=true
+      - run:
+          npx nx affected --target=docker-build --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}  --tag "test" \
+          --label "runnumber=${GITHUB_RUN_ID}" \
+          --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}"
+      - name: Affected Projects
+        run: |
+          product=$(npx nx print-affected --type=app --select=projects --base=${{ env.NX_BASE }} --head=${{ env.NX_HEAD }}  )
+          echo "productreleaselist=$product" >> $GITHUB_ENV
+          echo Asset Config: $product
+      - name: Below projects will be built
+        run: echo ${{ env.productreleaselist }}
+      - name: Checkout devops-reusable-workflows
+        if: "${{ inputs.specify_repo == ''}}"
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DEVOPS_SDE_AUTOMATION }}
+          repository: cdk-prod/devops-reusable-workflows
+          path: devops-reusable-workflows
+          ref: master
+      - name: Checkout devops-reusable-workflows repo (testing version - which grabs branch being altered.)
+        if: "${{ inputs.specify_repo != ''}}"
+        uses: actions/checkout@v3
+        with:
+          path: devops-reusable-workflows
+      - name: Build & Publish Docker Image
+        if: contains(env.productreleaselist, 'services-srv-telephonymasterdata-importer')
+        uses: ./devops-reusable-workflows/.github/actions/CI-Build-Publish
+        with:
+          application_name: 'srv-telephonymasterdata-importer'
+          registry_login: ${{ github.repository_owner }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
+          product_name: 'call-intelligence'
+          dockerfile: apps/services/srv-telephonymasterdata-importer/Dockerfile
+      ## Trigger deployment for services-srv-telephonymasterdata-importer for environment DEV
+      - name: Trigger Deployment for services-srv-telephonymasterdata-importer
+        if: ${{ success() }} && contains(env.productreleaselist, 'services-srv-telephonymasterdata-importer')
+        env:
+          defaultType: 'deploy-dev'
+          VERSION: 1.0.${{github.GITHUB_RUN_NUMBER}}
+          DOCKER_IMAGE_VERSION: '${{ github.event.client_payload.image_tag || env.RUN_NUMBER}}'
+        run: |
+          curl -X POST -H "Authorization: Bearer ${{ secrets.DEVOPS_SDE_AUTOMATION }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/dispatches \
+          -d '{"event_type": "${{ env.defaultType }}", "client_payload": { "ref": "${{ github.ref }}","image_tag": "${{ env.DOCKER_IMAGE_VERSION }}", "ASSET_ID": "srv-telephonymasterdata-importer"}}'

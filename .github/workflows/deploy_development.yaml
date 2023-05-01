@@ -1,0 +1,57 @@
+name: Deploy - development
+on:
+  workflow_dispatch:
+    inputs:
+      docker_image_version:
+        description: "Build Version (ie: 'develop_1.0.32' )"
+        type: string
+        required: true
+
+jobs:
+  nebula-deployment-step:
+    env:
+      ## Enter Name of the Service being deployed (Asset ID from App-Registry)
+      ASSET_ID: '${{ inputs.docker_image_version }}'
+      # srv-telephonymasterdata-importer
+      ## Enter Kubernetes Deployment Version label here
+      VERSION: '${{ github.run_number }}'
+
+      ## Enter Environment name here, allowed environment can be found in App Registry # Doclink
+      ENVIRONMENT: 'dev-pdx'
+
+      ## Enter Docker Image Version here
+      DOCKER_IMAGE_VERSION: '${{ inputs.docker_image_version }}'
+
+      ## Enter Docker Extra parameters here details here, can be combination of string and secrets
+      ## e.g: ("-e custom=true -e secrets=${{ secrets.test }}")
+      ## DEPLOYMENT_ENV = the name of the file that holds the private key for the environment being deployed to
+      DOCKER_EXTRA_ENV: '-e APP_ENV=dev'
+
+      ## Number of times to retry /health polling during deployment; 10sec wait between each try
+      #RETRY_NUM: "20"
+
+    ############# No User Configurable Values Beyond This Point #############
+
+    ## GITHUB Runner Label
+    runs-on: nebula_prod
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Register action from nebula internal deployment repo
+        # This ensures that nebula cicd action is called for register context(master branch for Prod env and nonprod branch for Nonprod Env)
+        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master
+
+        env:
+          METHOD: register
+        id: register
+
+      - run: |
+          echo "Application testing if any.."
+          # Mention any number of commands here
+      - name: Run Activate action from nebula internal deployment repo
+        uses: cdk-prod/nebula-utility-shared-action/.github/actions/nebula-cicd/prod@master # This ensures that nebula cicd action is called for activate context
+        env:
+          METHOD: activate
+        id: activate
+env:
+  NEBULA_GPG_PASSPHRASE: ${{ secrets.NEBULA_GPG_PASSPHRASE }}
+  HEALTHCHECK_TOKEN: ${{ secrets.DIT_HEALTHCHECK_TOKEN }}
