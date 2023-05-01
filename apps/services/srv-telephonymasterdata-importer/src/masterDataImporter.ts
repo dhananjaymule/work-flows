@@ -1,8 +1,8 @@
 
 import { getNeutronQueryList } from './NeutronQueryList';
 import { importType } from './types';
-import { getDataFromNeutron } from '@vca-integration-hub/adapters/neutron';
-import { writeToKafka } from '@vca-integration-hub/adapters/kafka';
+import { getDataFromNeutron } from '@vca-services-hub/adapters/neutron';
+import { writeToKafka } from '@vca-services-hub/adapters/kafka';
 const masterDataImporter = async (type: importType, fromDate: string, skip = 0, limit = 100) => {
     // For every run do below 
 

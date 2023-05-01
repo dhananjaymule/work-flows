@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const originalResolveFilename = Module._resolveFilename;
 const distPath = __dirname;
-const manifest = [{"module":"@vca-integration-hub/adapters/kafka","exactMatch":"libs/adapters/kafka/src/index.js","pattern":"libs/adapters/kafka/src/index.ts"},{"module":"@vca-integration-hub/adapters/neutron","exactMatch":"libs/adapters/neutron/src/index.js","pattern":"libs/adapters/neutron/src/index.ts"}];
+const manifest = [{"module":"@vca-services-hub/adapters/kafka","exactMatch":"libs/adapters/kafka/src/index.js","pattern":"libs/adapters/kafka/src/index.ts"},{"module":"@vca-services-hub/adapters/neutron","exactMatch":"libs/adapters/neutron/src/index.js","pattern":"libs/adapters/neutron/src/index.ts"}];
 
 Module._resolveFilename = function(request, parent) {
   let found;
