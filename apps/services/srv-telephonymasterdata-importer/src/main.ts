@@ -34,7 +34,7 @@ app.get('/health', (req, res) => {
 
 // TODO - store last_updated_ts somewhere 
 // const last_updated_ts = new Date().toISOString();// get timestamp from datetime 
-const last_updated_ts = "2023-04-21T03:42:18.187Z"
+const last_updated_ts = "2023-03-21T03:42:18.187Z"
 masterDataImporter(importType.WxCEnterprise, last_updated_ts);
 masterDataImporter(importType.WxCDepartments, last_updated_ts);
 masterDataImporter(importType.WxCHuntGroup, last_updated_ts);
