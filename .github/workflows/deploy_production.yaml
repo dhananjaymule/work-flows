@@ -6,12 +6,16 @@ on:
         description: "Build Version (ie: 'develop_1.0.32' )"
         type: string
         required: true
+      app_name:
+        description: "App Name (ie: 'services-srv-telephonymasterdata-importer' )"
+        type: string
+        required: true  
 
 jobs:
   nebula-deployment-step:
     env:
       ## Enter Name of the Service being deployed (Asset ID from App-Registry)
-      ASSET_ID: '${{ inputs.docker_image_version }}'
+      ASSET_ID: '${{ inputs.app_name }}'
       # srv-telephonymasterdata-importer
       ## Enter Kubernetes Deployment Version label here
       VERSION: '${{ github.run_number }}'
