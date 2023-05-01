@@ -15,10 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@vca-integration-hub/adapters/kafka": [
-        "libs/adapters/kafka/src/index.ts"
-      ],
-      "@vca-integration-hub/adapters/neutron": [
+      "@vca-services-hub/adapters/kafka": ["libs/adapters/kafka/src/index.ts"],
+      "@vca-services-hub/adapters/neutron": [
         "libs/adapters/neutron/src/index.ts"
       ]
     }
