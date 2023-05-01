@@ -1,0 +1,12 @@
+{
+  "name": "@vca-integration-hub/adapters/kafka",
+  "version": "0.0.1",
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  },
+  "peerDependencies": {
+    "tslib": "2.5.0"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts"
+}
