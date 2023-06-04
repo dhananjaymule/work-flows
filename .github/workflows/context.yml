@@ -4,11 +4,11 @@ on:
  push:
    branches:
      - main
-     
-jobs:
-  build:
-   runs-on: ubuntu-latest
-   - name: Dump GitHub context
-     env:
-       GITHUB_CONTEXT: ${{ toJson(github) }}
-     run: echo "$GITHUB_CONTEXT"
+jobs:     
+ build_flow:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
