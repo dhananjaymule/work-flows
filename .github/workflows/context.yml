@@ -1,0 +1,14 @@
+name: what-is-context
+
+on:
+ push:
+   branches:
+     - main
+     
+jobs:
+  build:
+   runs-on: ubuntu-latest
+   - name: Dump GitHub context
+     env:
+       GITHUB_CONTEXT: ${{ toJson(github) }}
+     run: echo "$GITHUB_CONTEXT"
