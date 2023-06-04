@@ -3,7 +3,7 @@ name: publish-image-docker
 on:
  push:
    branches:
-     - main
+     - naster
      
 jobs:
   build-n-publish:

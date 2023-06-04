@@ -3,7 +3,7 @@ name: go lint run
 on:
  push:
    branches:
-     - main
+     - naster
      
      
 jobs:
