@@ -6,7 +6,7 @@ on:
      - main
 jobs:     
  build_flow:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted]
     steps:
       - name: Dump GitHub context
         env:
