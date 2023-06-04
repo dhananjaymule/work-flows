@@ -3,7 +3,7 @@ name: what-is-context
 on:
  push:
    branches:
-     - main
+     - maine
 jobs:     
  build_flow:
     runs-on: [self-hosted, linux]
