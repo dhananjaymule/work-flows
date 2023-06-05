@@ -1,5 +1,5 @@
 {
-  "name": "services-srv-telephonymasterdata-importer",
+  "name": "svc-srv-telephonymasterdata-importer",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/srv-telephonymasterdata-importer/src",
   "projectType": "application",

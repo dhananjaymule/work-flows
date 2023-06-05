@@ -1,5 +1,5 @@
 {
-  "name": "services-srv-callrecordings-gcloud-handler",
+  "name": "svc-srv-callrecordings-gcloud-handler",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/srv-callrecordings-gcloud-handler/src",
   "projectType": "application",
