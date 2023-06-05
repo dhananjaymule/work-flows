@@ -4,7 +4,7 @@
 # Tip: Modify "docker-build" options in project.json to change docker build args.
 #
 # Run the container with `docker run -p 3000:3000 -t services-srv-callrecordings-gcloud-handler`.
-FROM docker.io/node:lts-alpine
+FROM artifactory.cdk.com/docker-local/nebula/node:14.17-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=3000
