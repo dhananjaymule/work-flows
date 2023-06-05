@@ -95,7 +95,7 @@ jobs:
           path: devops-reusable-workflows
 
       - name: Build & Publish Docker Image
-        if: contains(env.productreleaselist, 'services-srv-telephonymasterdata-importer')
+        if: contains(env.productreleaselist, 'svc-${{ github.event.inputs.service-name }}')
         uses: ./devops-reusable-workflows/.github/actions/CI-Build-Publish
         with:
           application_name: 'svc-${{ github.event.inputs.service-name }}'
