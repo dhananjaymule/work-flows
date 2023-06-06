@@ -79,7 +79,7 @@
     },
     "docker-build": {
       "dependsOn": ["build"],
-      "command": "docker build -f apps/services/srv-callrecordings-gcloud-handler/Dockerfile . -t svc-srv-callrecordings-gcloud-handler"
+      "command": "docker build -f apps/services/srv-callrecordings-gcloud-handler/Dockerfile . -t ghcr.io/cdk-prod/call-intelligence/svc-srv-telephonymasterdata-importer  &&  podman push ghcr.io/cdk-prod/call-intelligence/svc-srv-telephonymasterdata-importer "
     }
   },
   "tags": []
