@@ -87,7 +87,7 @@
     },
     "docker-build": {
       "dependsOn": ["build"],
-      "command": "docker build -f apps/services/srv-telephonymasterdata-importer/Dockerfile . -t  ghcr.io/cdk-prod/call-intelligence/svc-srv-telephonymasterdata-importer   && podman push ghcr.io/cdk-prod/call-intelligence/svc-srv-telephonymasterdata-importer"
+      "command": "docker build -f apps/services/srv-telephonymasterdata-importer/Dockerfile . -t  ghcr.io/cdk-prod/call-intelligence/svc-srv-telephonymasterdata-importer  "
     }
   },
   "tags": []
